@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-
+from config import Settings
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
-
-from config import Settings
 
 settings = Settings()
 
 async_engine = create_async_engine(
     settings.db_url,
-    connect_args={"server_settings": {"application_name": "PROJECT_SERVICE_ASYNC"}},
+    connect_args={"server_settings": {"application_name": "API_SERVICE_ORDER_ASYNC"}},
     max_overflow=settings.DB_ENGINE_MAX_OVERFLOW,
     pool_pre_ping=settings.DB_ENGINE_POOL_PRE_PING,
     pool_recycle=settings.DB_ENGINE_POOL_RECYCLE,

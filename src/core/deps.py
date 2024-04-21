@@ -6,11 +6,11 @@ from collections.abc import AsyncGenerator
 from functools import lru_cache
 from logging import Logger
 
-from src.config import Settings
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
-from src.core.db_settings import create_async_session
+from config import Settings
+from core.db_settings import create_async_session
 
 
 def get_logger() -> Logger:
