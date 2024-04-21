@@ -3,7 +3,6 @@ from __future__ import annotations
 import abc
 
 
-class BaseService(abc.ABC):
-    @abc.abstractmethod
+class BaseService():
     def __init__(self) -> None:
         pass

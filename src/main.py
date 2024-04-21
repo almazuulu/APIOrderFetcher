@@ -1,10 +1,14 @@
 import uvicorn
 from fastapi import FastAPI
-from src.app import api as fetcher_api
+from src.app.api import api as fetcher_api
+from src.core.deps import get_settings
+
+settings = get_settings()
+
 
 app = FastAPI(
-    title="API Order fetcher",
-    description=f"для асинхронной загрузки и обработки данных о заказах и продажах",
+    title=settings.APP_NAME,
+    description=f"{settings.OPENAPI_DESCRIPTION}",
 )
 
 app.include_router(fetcher_api.router, prefix="/api/v1")
