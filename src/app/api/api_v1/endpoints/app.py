@@ -7,7 +7,6 @@ from src.app.services.data_fetcher_service import FetchService
 router = APIRouter()
 
 def get_fetch_service():
-    # Создаем и конфигурируем экземпляр FetchService, если нужно
     return FetchService()
 
 @router.post("/start-fetching-orders/")
