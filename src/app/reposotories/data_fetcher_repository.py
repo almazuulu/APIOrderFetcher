@@ -1,3 +1,7 @@
+import os
+from datetime import datetime
+
+import pandas as pd
 from sqlalchemy import select, update, insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.future import select
@@ -8,6 +12,43 @@ from app.models.sales import Sale
 from repositories.base import BaseRepository
 
 class DataFetcherRepository(BaseRepository):
+
+    async def save_data_to_excel(self, data, type_of_data):
+        if not data:
+            print("No data provided to save to Excel.")
+            return
+
+        try:
+            # Создание DataFrame из данных
+            new_data_df = pd.DataFrame(data)
+        except Exception as e:
+            print(f"Error creating DataFrame from data: {e}")
+            return
+
+        # Определение пути и имени файла с текущей датой и временем
+        now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        folder_path = "app/excel_data"  # Вы можете изменить этот путь по вашему желанию
+        excel_filepath = os.path.join(folder_path, f"{type_of_data}_{now}.xlsx")
+
+        # Проверяем, существует ли директория, и если нет, создаем ее
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+        if os.path.exists(excel_filepath):
+            # Чтение существующего файла и добавление новых данных
+            existing_df = pd.read_excel(excel_filepath)
+            updated_df = pd.concat([existing_df, new_data_df], ignore_index=True)
+        else:
+            updated_df = new_data_df
+
+        # Удаление столбца id, если он существует
+        if 'id' in updated_df.columns:
+            updated_df = updated_df.drop(columns=['id'])
+
+        # Сохранение DataFrame в Excel
+        updated_df.to_excel(excel_filepath, index=False)
+        print(f"Data appended to {excel_filepath}")
+
     async def upsert_order(self, order_data: dict) -> None:
         """Inserts or updates an order based on srid."""
         try:

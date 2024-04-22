@@ -38,3 +38,18 @@ class Base(DeclarativeBase):
                 cols.append(f"{col}={getattr(self, col)}")
 
         return f"<{self.__class__.__name__} {', '.join(cols)}>"
+
+
+class BaseCreateUpdated(Base):
+    __abstract__ = True
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=func.now(),
+        onupdate=func.now(),
+        server_default=func.now(),
+        server_onupdate=FetchedValue(),
+    )

@@ -4,10 +4,10 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import UUID as SQL_UUID, String, DateTime
 from datetime import datetime
 
-from models.base_model import Base
+from models.base_model import BaseCreateUpdated
 
 
-class Order(Base):
+class Order(BaseCreateUpdated):
     __tablename__ = "orders"
 
     id: Mapped[int] = mapped_column(SQL_UUID, primary_key=True, default=uuid.uuid4)

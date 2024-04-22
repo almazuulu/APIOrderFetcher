@@ -39,66 +39,42 @@ class FetchService(BaseService):
                 return data
         except httpx.HTTPStatusError as exc:
             print(f"HTTP error occurred: {exc.response.status_code} - {exc.response.text}")
-            return None
         except httpx.RequestError as exc:
             print(f"Request error occurred: {exc}")
-            return None
-
-    # async def process_and_save_data(self, data, data_type):
-    #     tasks = []
-    #     MIN_DATE = datetime(1, 1, 1, tzinfo=timezone.utc)  # Установка минимально возможной даты
-    #
-    #     if data:
-    #         for item in data:
-    #             # Преобразуем строки даты в объекты datetime
-    #             if 'date' in item:
-    #                 item['date'] = datetime.fromisoformat(item['date'])
-    #             if 'lastChangeDate' in item:
-    #                 item['lastChangeDate'] = datetime.fromisoformat(item['lastChangeDate'])
-    #             if 'cancelDate' in item:
-    #                 # Применяем MIN_DATE если cancelDate равно '0001-01-01T00:00:00'
-    #                 item['cancelDate'] = datetime.fromisoformat(item['cancelDate']) if item[
-    #                                                                                        'cancelDate'] != '0001-01-01T00:00:00' else MIN_DATE
-    #
-    #             # Создаём задачу на сохранение в зависимости от типа данных
-    #             if data_type == 'order':
-    #                 task = asyncio.create_task(self.repository.upsert_order(item))
-    #             elif data_type == 'sale':
-    #                 task = asyncio.create_task(self.repository.upsert_sale(item))
-    #             tasks.append(task)
-    #
-    #         if tasks:
-    #             await asyncio.gather(*tasks)
-    #             for task in tasks:
-    #                 await task.result().session.close()
+        return []  # Возвращаем пустой список, если возникла ошибка
 
     async def process_and_save_data(self, data, data_type):
-        # Each data processing task should have its own session scope
+        if not data:
+            print("No data to process.")
+            return
+
         tasks = []
-        MIN_DATE = datetime(1, 1, 1, tzinfo=timezone.utc)  # Установка минимально возможной даты
+        processed_data = []
         for item in data:
-            # Process each item in its own task with a new session
-            task = asyncio.create_task(self.process_item(item, data_type))
+            # Создание задачи для обработки каждого элемента
+            task = asyncio.create_task(self.process_item(item, data_type, processed_data))
             tasks.append(task)
         await asyncio.gather(*tasks)
 
-    async def process_item(self, item, data_type):
+        # Сохранение обработанных данных в Excel
+        if processed_data:
+            await self.repository.save_data_to_excel(processed_data, data_type)
+
+    async def process_item(self, item, data_type, processed_data):
         MIN_DATE = datetime(2000, 1, 1, tzinfo=timezone.utc)
         async with create_async_session() as session:
             repository = DataFetcherRepository(session)
 
-            # Handle 'date'
+            # Обработка данных элемента
             if 'date' in item:
                 item_date = datetime.fromisoformat(item['date'])
                 item['date'] = item_date.replace(tzinfo=None) if item_date.tzinfo else item_date
 
-            # Handle 'lastChangeDate'
             if 'lastChangeDate' in item:
                 last_change_date = datetime.fromisoformat(item['lastChangeDate'])
                 item['lastChangeDate'] = last_change_date.replace(
                     tzinfo=None) if last_change_date.tzinfo else last_change_date
 
-            # Handle 'cancelDate'
             if 'cancelDate' in item:
                 if item['cancelDate'] == '0001-01-01T00:00:00':
                     item['cancelDate'] = MIN_DATE.replace(tzinfo=None)
@@ -106,7 +82,10 @@ class FetchService(BaseService):
                     cancel_date = datetime.fromisoformat(item['cancelDate'])
                     item['cancelDate'] = cancel_date.replace(tzinfo=None) if cancel_date.tzinfo else cancel_date
 
-            # Save data based on type
+            # Добавление обработанных данных в список
+            processed_data.append(item)
+
+            # Сохранение данных в базе данных
             if data_type == 'order':
                 await repository.upsert_order(item)
             elif data_type == 'sale':
