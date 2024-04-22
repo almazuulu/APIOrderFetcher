@@ -11,6 +11,7 @@ class Sale(Base):
     __tablename__ = "sales"
 
     id: Mapped[int] = mapped_column(SQL_UUID, primary_key=True, default=uuid.uuid4)
+    date: Mapped[datetime]
     lastChangeDate: Mapped[datetime]
     warehouseName: Mapped[str]
     countryName: Mapped[str]
