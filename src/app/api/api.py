@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from src.app.api.api_v1.endpoints.app import router as api_router
+from app.api.api_v1.endpoints.app import router as api_router
 from fastapi import APIRouter
 
 router = APIRouter()

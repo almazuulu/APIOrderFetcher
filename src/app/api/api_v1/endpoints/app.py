@@ -2,7 +2,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from datetime import datetime, timedelta
 from pytz import timezone
 
-from src.app.services.data_fetcher_service import FetchService
+from app.services.data_fetcher_service import FetchService
 
 router = APIRouter()
 

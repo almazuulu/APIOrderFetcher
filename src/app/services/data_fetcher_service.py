@@ -6,9 +6,9 @@ from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.reposotories.data_fetcher_repository import DataFetcherRepository
-from src.core.deps import get_settings, get_session
-from src.services.base import BaseService
-from src.core.db_settings import create_async_session
+from core.deps import get_settings, get_session
+from services.base import BaseService
+from core.db_settings import create_async_session
 
 class FetchService(BaseService):
     def __init__(self, session: AsyncSession = Depends(get_session)) -> None:
