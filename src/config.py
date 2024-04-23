@@ -50,6 +50,7 @@ class DBSettings(BaseSettings):
 class WBSettings(BaseSettings):
     BEARER_TOKEN: str
     BASE_URL: str
+    TELEGRAM_BOT_API_TOKEN: str
 
 class Settings(APISettings, DBSettings, WBSettings):
     model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
