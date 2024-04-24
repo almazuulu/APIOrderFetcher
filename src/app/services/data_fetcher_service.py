@@ -37,7 +37,7 @@ class FetchService(BaseService):
             "flag": flag,
         }
         logger.info(
-            f"Fetching data from URL: {api_url} with headers: {headers} and params: {params}",
+            f"Fetching data from URL: {api_url}",
         )
         try:
             async with httpx.AsyncClient() as client:
@@ -142,6 +142,7 @@ class FetchService(BaseService):
     async def repeat_every(self, interval: int, func, *args):
         """Метод для повторного отправления запросов через определенное время"""
         while True:
+            # Запуск команды каждые 1800 секунд (30 минут)
             logger.info(f"Running task every {interval} seconds with args: {args}")
             await func(*args)
             await asyncio.sleep(interval)
