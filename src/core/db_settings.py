@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-
+from config import Settings
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine
-
-from config import Settings
 
 settings = Settings()
 

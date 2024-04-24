@@ -1,1 +1,1 @@
-from app.models import orders, sales
+from __future__ import annotations

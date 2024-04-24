@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import uvicorn
-from fastapi import FastAPI
 from app.api import api as fetcher_api
 from core.deps import get_settings
+from fastapi import FastAPI
 
 settings = get_settings()
 

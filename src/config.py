@@ -1,18 +1,20 @@
 from __future__ import annotations
 
+import logging
+import os
+from logging.handlers import RotatingFileHandler
+
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
-import logging
-from logging.handlers import RotatingFileHandler
-import os
+
 
 def setup_logging():
     log_directory = "logs"
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
 
-    log_file_path = os.path.join(log_directory, 'app.log')
+    log_file_path = os.path.join(log_directory, "app.log")
 
     # Создание и настройка корневого логгера
     logging.basicConfig(level=logging.INFO)
@@ -22,7 +24,9 @@ def setup_logging():
     file_handler.setLevel(logging.INFO)
 
     # Создание форматтера и добавление его к обработчику
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
     file_handler.setFormatter(formatter)
 
     # Получение корневого логгера и добавление обработчика
@@ -31,9 +35,12 @@ def setup_logging():
 
     return logger
 
+
 class APISettings(BaseSettings):
     APP_NAME: str = "API Order fetcher"
-    OPENAPI_DESCRIPTION: str = "Сервис для асинхронной загрузки и обработки данных о заказах и продажах"
+    OPENAPI_DESCRIPTION: str = (
+        "Сервис для асинхронной загрузки и обработки данных о заказах и продажах"
+    )
     ADMIN_EMAIL: str
 
 
@@ -47,10 +54,12 @@ class DBSettings(BaseSettings):
     DATABASE_URL: str
     DB_CREDENTIALS: SecretStr
 
+
 class WBSettings(BaseSettings):
     BEARER_TOKEN: str
     BASE_URL: str
     TELEGRAM_BOT_API_TOKEN: str
+
 
 class Settings(APISettings, DBSettings, WBSettings):
     model_config = SettingsConfigDict(env_file="../.env", extra="ignore")
@@ -74,6 +83,4 @@ class Settings(APISettings, DBSettings, WBSettings):
 
     @property
     def db_url(self) -> str:
-        return (
-                self.DATABASE_URL % self.DB_CREDENTIALS.get_secret_value()
-        )
+        return self.DATABASE_URL % self.DB_CREDENTIALS.get_secret_value()

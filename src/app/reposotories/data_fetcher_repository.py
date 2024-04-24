@@ -1,18 +1,18 @@
+from __future__ import annotations
+
 import os
 from datetime import datetime
 
 import pandas as pd
-from sqlalchemy import select, update, insert
-from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.future import select
-from sqlalchemy.dialects.postgresql import insert as pg_insert
-
 from app.models.orders import Order
 from app.models.sales import Sale
 from repositories.base import BaseRepository
+from sqlalchemy import select
+from sqlalchemy import update
+from sqlalchemy.exc import SQLAlchemyError
+
 
 class DataFetcherRepository(BaseRepository):
-
     async def save_data_to_excel(self, data, type_of_data):
         if not data:
             print("No data provided to save to Excel.")
@@ -42,8 +42,8 @@ class DataFetcherRepository(BaseRepository):
             updated_df = new_data_df
 
         # Удаление столбца id, если он существует
-        if 'id' in updated_df.columns:
-            updated_df = updated_df.drop(columns=['id'])
+        if "id" in updated_df.columns:
+            updated_df = updated_df.drop(columns=["id"])
 
         # Сохранение DataFrame в Excel
         updated_df.to_excel(excel_filepath, index=False)
@@ -52,13 +52,13 @@ class DataFetcherRepository(BaseRepository):
     async def upsert_order(self, order_data: dict) -> None:
         """Inserts or updates an order based on srid."""
         try:
-            stmt = select(Order).where(Order.srid == order_data['srid'])
+            stmt = select(Order).where(Order.srid == order_data["srid"])
             result = await self.one_or_none(stmt)
             if result:
                 # Если запись существует, обновляем её
                 update_stmt = (
                     update(Order)
-                    .where(Order.srid == order_data['srid'])
+                    .where(Order.srid == order_data["srid"])
                     .values(**order_data)
                     .execution_options(synchronize_session="fetch")
                 )
@@ -76,13 +76,13 @@ class DataFetcherRepository(BaseRepository):
     async def upsert_sale(self, sale_data: dict) -> None:
         """Inserts or updates a sale based on srid."""
         try:
-            stmt = select(Sale).where(Sale.srid == sale_data['srid'])
+            stmt = select(Sale).where(Sale.srid == sale_data["srid"])
             result = await self.one_or_none(stmt)
             if result:
                 # Если запись существует, обновляем её
                 update_stmt = (
                     update(Sale)
-                    .where(Sale.srid == sale_data['srid'])
+                    .where(Sale.srid == sale_data["srid"])
                     .values(**sale_data)
                     .execution_options(synchronize_session="fetch")
                 )

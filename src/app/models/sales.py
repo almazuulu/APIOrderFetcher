@@ -1,10 +1,13 @@
-import uuid
+from __future__ import annotations
 
-from sqlalchemy.orm import mapped_column, Mapped
-from sqlalchemy import UUID as SQL_UUID, String
+import uuid
+from datetime import datetime
 
 from models.base_model import BaseCreateUpdated
-from datetime import datetime
+from sqlalchemy import String
+from sqlalchemy import UUID as SQL_UUID
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
 
 class Sale(BaseCreateUpdated):
