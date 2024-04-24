@@ -17,6 +17,9 @@ logger = logging.getLogger(__name__)
 
 class DataFetcherRepository(BaseRepository):
     async def save_data_to_excel(self, data, type_of_data):
+        """
+        Метод для сохранения и генерации экзель файла
+        """
         if not data:
             logger.info("No data provided to save to Excel.")
             return
@@ -53,7 +56,7 @@ class DataFetcherRepository(BaseRepository):
         logger.info(f"Data appended to {excel_filepath}")
 
     async def upsert_order(self, order_data: dict) -> None:
-        """Inserts or updates an order based on srid."""
+        """Вставка или обновления данных заказов"""
         try:
             stmt = select(Order).where(Order.srid == order_data["srid"])
             result = await self.one_or_none(stmt)
@@ -77,7 +80,7 @@ class DataFetcherRepository(BaseRepository):
             logger.error(f"Database error when upserting order: {e}")
 
     async def upsert_sale(self, sale_data: dict) -> None:
-        """Inserts or updates a sale based on srid."""
+        """Вставка или обновления данных продаж"""
         try:
             stmt = select(Sale).where(Sale.srid == sale_data["srid"])
             result = await self.one_or_none(stmt)

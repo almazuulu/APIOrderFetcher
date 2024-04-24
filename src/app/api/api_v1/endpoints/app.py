@@ -17,8 +17,12 @@ async def start_fetching_orders(
     background_tasks: BackgroundTasks,
     service: FetchService = Depends(),
 ):
+    """
+    Метод для старта получения заказов с маркетплейса
+    """
     moscow_tz = timezone("Europe/Moscow")
-    date_from = datetime.now(moscow_tz) - timedelta(minutes=30)
+    date_from = datetime.now(moscow_tz) - timedelta(minutes=30)  # Последние 30 минут
+    # date_from2 = datetime.fromisoformat("2024-04-23T00:00:00")  # Дата для теста
     background_tasks.add_task(
         service.repeat_every,
         1800,
@@ -33,8 +37,12 @@ async def start_fetching_sales(
     background_tasks: BackgroundTasks,
     service: FetchService = Depends(),
 ):
+    """
+    Метод для старта получения продаж с маркетплейса
+    """
     moscow_tz = timezone("Europe/Moscow")
     date_from = datetime.now(moscow_tz) - timedelta(minutes=30)  # Последние 30 минут
+    # date_from2 = datetime.fromisoformat("2024-04-23T00:00:00")  # Дата для теста
     background_tasks.add_task(
         service.repeat_every,
         1800,

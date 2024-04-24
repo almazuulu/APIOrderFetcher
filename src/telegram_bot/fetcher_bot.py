@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 API_TOKEN = os.getenv("TELEGRAM_BOT_API_TOKEN")
-EXCEL_FOLDER_PATH = "src/app/excel_data"
+EXCEL_FOLDER_PATH = "../app/excel_data"
 
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 router = Router()

@@ -25,6 +25,9 @@ class FetchService(BaseService):
         self.api_token = settings.BEARER_TOKEN
 
     async def fetch_data(self, api_url: str, date_from: datetime, flag: int):
+        """
+        Метод для отправки запроса на получения продаж и заказов из маркетплейса
+        """
         headers = {
             "Authorization": f"Bearer {self.api_token}",
             "Content-Type": "application/json",
@@ -51,9 +54,12 @@ class FetchService(BaseService):
             )
         except httpx.RequestError as exc:
             logger.error(f"Request error occurred: {exc}")
-        return []  # Return empty list if there is an error
+        return []
 
     async def process_and_save_data(self, data, data_type):
+        """
+        Сохранения результата в БД и в Excel файл
+        """
         if not data:
             logger.info("No data to process.")
             return
@@ -73,6 +79,9 @@ class FetchService(BaseService):
             await self.repository.save_data_to_excel(processed_data, data_type)
 
     async def process_item(self, item, data_type, processed_data):
+        """
+        Обработка дат
+        """
         MIN_DATE = datetime(2000, 1, 1, tzinfo=timezone.utc)
         async with create_async_session() as session:
             repository = DataFetcherRepository(session)
@@ -115,6 +124,7 @@ class FetchService(BaseService):
                 await repository.upsert_sale(item)
 
     async def fetch_orders(self, date_from_tuple: tuple, flag: int = 0):
+        """Метод для получения и сохранения заказов"""
         date_from = date_from_tuple[0]
         orders_url = f"{self.base_url}/api/v1/supplier/orders"
         logger.info(f"Fetching orders for date: {date_from}")
@@ -122,6 +132,7 @@ class FetchService(BaseService):
         await self.process_and_save_data(order_data, "order")
 
     async def fetch_sales(self, date_from_tuple: tuple, flag: int = 0):
+        """Метод для получения и сохранения продаж"""
         date_from = date_from_tuple[0]
         sales_url = f"{self.base_url}/api/v1/supplier/sales"
         logger.info(f"Fetching sales for date: {date_from}")
@@ -129,6 +140,7 @@ class FetchService(BaseService):
         await self.process_and_save_data(sale_data, "sale")
 
     async def repeat_every(self, interval: int, func, *args):
+        """Метод для повторного отправления запросов через определенное время"""
         while True:
             logger.info(f"Running task every {interval} seconds with args: {args}")
             await func(*args)
