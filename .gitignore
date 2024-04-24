@@ -130,6 +130,7 @@ env.bak/
 venv.bak/
 logs/
 .idea
+excel_data/
 
 # Spyder project settings
 .spyderproject
