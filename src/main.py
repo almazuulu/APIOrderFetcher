@@ -4,6 +4,9 @@ import uvicorn
 from app.api import api as fetcher_api
 from core.deps import get_settings
 from fastapi import FastAPI
+from logger_config import setup_logging
+
+setup_logging()
 
 settings = get_settings()
 

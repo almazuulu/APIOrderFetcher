@@ -1,39 +1,8 @@
 from __future__ import annotations
 
-import logging
-import os
-from logging.handlers import RotatingFileHandler
-
 from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
-
-
-def setup_logging():
-    log_directory = "logs"
-    if not os.path.exists(log_directory):
-        os.makedirs(log_directory)
-
-    log_file_path = os.path.join(log_directory, "app.log")
-
-    # Создание и настройка корневого логгера
-    logging.basicConfig(level=logging.INFO)
-
-    # Создание обработчика, который пишет логи в файл
-    file_handler = RotatingFileHandler(log_file_path, maxBytes=1024000, backupCount=5)
-    file_handler.setLevel(logging.INFO)
-
-    # Создание форматтера и добавление его к обработчику
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
-    file_handler.setFormatter(formatter)
-
-    # Получение корневого логгера и добавление обработчика
-    logger = logging.getLogger()
-    logger.addHandler(file_handler)
-
-    return logger
 
 
 class APISettings(BaseSettings):
